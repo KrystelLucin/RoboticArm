@@ -59,6 +59,11 @@
     <Analyzer Include="C:\Program Files\Unity\Hub\Editor\2022.3.12f1\Editor\Data\Tools\Unity.SourceGenerators\Unity.Properties.SourceGenerator.dll" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assets\Scripts\MunecaController.cs" />
+    <Compile Include="Assets\Scripts\IndiceController.cs" />
+    <Compile Include="Assets\Scripts\UnityThread.cs" />
+    <Compile Include="Assets\Scripts\UDPReceive.cs" />
+    <Compile Include="Assets\Scripts\PulgarController.cs" />
     <Compile Include="Assets\Scripts\RobotController.cs" />
   </ItemGroup>
   <ItemGroup>

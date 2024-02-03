@@ -4,15 +4,15 @@ using System.Net.Sockets;
 using System.Text;
 using UnityEngine;
 
-public class BrazoController : MonoBehaviour
+public class RobotController : MonoBehaviour
 {
-    public GameObject muneca;
-    public GameObject indice;
-    public GameObject pulgar;
+    public GameObject muneca; // Este es el GameObject de la muñeca
 
     private TcpListener listener;
     private const int PORT = 10000;
     private bool isRunning = true;
+    private float angleToRotate = 0f; // Ángulo recibido para la rotación
+    private bool shouldRotate = false; // Controla si debe ocurrir una rotación
 
     void Start()
     {
@@ -20,6 +20,17 @@ public class BrazoController : MonoBehaviour
         listener = new TcpListener(IPAddress.Parse("127.0.0.1"), PORT);
         listener.Start();
         ListenForIncomingRequests();
+    }
+
+    void Update()
+    {
+        // Verificar si hay una nueva rotación para aplicar
+        if (shouldRotate)
+        {
+            // Aplica la rotación en el eje X
+            muneca.transform.localEulerAngles = new Vector3(angleToRotate, muneca.transform.localEulerAngles.y, muneca.transform.localEulerAngles.z);
+            shouldRotate = false; // Restablece la bandera
+        }
     }
 
     private async void ListenForIncomingRequests()
@@ -47,26 +58,14 @@ public class BrazoController : MonoBehaviour
     private void ProcessReceivedData(string jsonData)
     {
         // Parse the JSON data
-        var puntos = JsonUtility.FromJson<Puntos>(jsonData);
+        float newAngle = JsonUtility.FromJson<float>(jsonData);
 
-        // Assuming that puntos contains float values for position and/or rotation
-        // Update the position and/or rotation of the robot parts
-        if (puntos != null)
+        // Asegurarse de que los datos son válidos
+        if (!float.IsNaN(newAngle))
         {
-            MoveRobotPart(muneca, puntos.muneca);
-            MoveRobotPart(indice, puntos.indice);
-            MoveRobotPart(pulgar, puntos.pulgar);
-        }
-    }
-
-    private void MoveRobotPart(GameObject part, Punto punto)
-    {
-        if (part != null && punto != null)
-        {
-            // Aquí se mueve cada parte según las coordenadas recibidas
-            // Esto puede implicar una transformación directa o una conversión basada en la cinemática del brazo
-            part.transform.position = new Vector3(punto.x, punto.y, part.transform.position.z); // Ejemplo simple
-            // También podrías necesitar rotar el objeto o aplicar otros cambios.
+            // Establece el ángulo para la rotación y activa la bandera
+            angleToRotate = newAngle;
+            shouldRotate = true;
         }
     }
 
@@ -78,21 +77,5 @@ public class BrazoController : MonoBehaviour
             isRunning = false;
             listener.Stop();
         }
-    }
-
-    // Esta clase debe coincidir con la estructura JSON que estás enviando desde Python
-    [Serializable]
-    public class Puntos
-    {
-        public Punto muneca;
-        public Punto indice;
-        public Punto pulgar;
-    }
-
-    [Serializable]
-    public class Punto
-    {
-        public float x;
-        public float y;
     }
 }
