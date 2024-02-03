@@ -14,7 +14,10 @@ public class MunecaController : MonoBehaviour
 
     private void RotateWrist(float angle)
     {
-        // Asumimos que el ángulo recibido es en grados y queremos aplicarlo directamente
-        transform.localEulerAngles = new Vector3(angle, transform.localEulerAngles.y, transform.localEulerAngles.z);
+        // Limitar el ángulo a los rangos permitidos antes de aplicar la rotación
+        float limitedAngle = AngleUtils.LimitAngle(angle);
+
+        // Aplicar la rotación limitada
+        transform.localEulerAngles = new Vector3(limitedAngle, transform.localEulerAngles.y, transform.localEulerAngles.z);
     }
 }
