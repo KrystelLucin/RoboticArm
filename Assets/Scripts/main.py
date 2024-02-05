@@ -3,7 +3,7 @@ import cv2
 import socket
 import math
 import json
-
+import numpy as np
 
 def calculate_angle(pointA, pointB):
     # Calcular el vector entre los dos puntos
@@ -14,6 +14,20 @@ def calculate_angle(pointA, pointB):
     angle_degrees = math.degrees(angle) % 360
     return angle_degrees
 
+def calculate_perpendicular_vector(p1, p2):
+    # Vector directo entre p1 y p2
+    vector = [p2[0] - p1[0], p2[1] - p1[1]]
+    # Vector perpendicular
+    perpendicular_vector = [-vector[1], vector[0]]
+    return perpendicular_vector
+
+def calculate_relative_angle(vector1, vector2):
+    dot_product = vector1[0] * vector2[0] + vector1[1] * vector2[1]
+    norm1 = (vector1[0]**2 + vector1[1]**2)**0.5
+    norm2 = (vector2[0]**2 + vector2[1]**2)**0.5
+    cos_angle = dot_product / (norm1 * norm2)
+    angle = math.acos(cos_angle)
+    return math.degrees(angle)
 
 # Configuración de la cámara
 width, height = 1280, 720
@@ -44,10 +58,21 @@ while True:
 
         # Asegurarse de que se detectaron los puntos necesarios
         if len(lmList) >= 9:
+            # Calcula el vector de referencia perpendicular
+            reference_vector = calculate_perpendicular_vector(lmList[2], lmList[5])
+
+            # Calcula los ángulos relativos para el índice y el pulgar
+            index_vector = [lmList[8][0] - lmList[6][0], lmList[8][1] - lmList[6][1]]
+            thumb_vector = [lmList[4][0] - lmList[2][0], lmList[4][1] - lmList[2][1]]
+            index_angle = calculate_relative_angle(reference_vector, index_vector)
+            thumb_angle = calculate_relative_angle(reference_vector, thumb_vector)
+            # Invertir el ángulo del pulgar antes de enviarlo
+            thumb_angle = 360 - thumb_angle
+
             # Calcular los ángulos
             wrist_angle = calculate_angle(lmList[0], lmList[5])
-            index_angle = calculate_angle(lmList[5], lmList[8])
-            thumb_angle = calculate_angle(lmList[2], lmList[4])
+            #index_angle = calculate_angle(lmList[6], lmList[8])
+            #thumb_angle = calculate_angle(lmList[2], lmList[4])
 
             # Crear un diccionario con los ángulos
             angles = {

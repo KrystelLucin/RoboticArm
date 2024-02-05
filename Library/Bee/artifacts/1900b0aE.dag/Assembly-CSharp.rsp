@@ -356,7 +356,6 @@
 "Assets/Scripts/IndiceController.cs"
 "Assets/Scripts/MunecaController.cs"
 "Assets/Scripts/PulgarController.cs"
-"Assets/Scripts/RobotController.cs"
 "Assets/Scripts/UDPReceive.cs"
 "Assets/Scripts/UnityThread.cs"
 -langversion:9.0

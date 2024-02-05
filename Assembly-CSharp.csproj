@@ -65,7 +65,6 @@
     <Compile Include="Assets\Scripts\UDPReceive.cs" />
     <Compile Include="Assets\Scripts\PulgarController.cs" />
     <Compile Include="Assets\Scripts\AngleUtils.cs" />
-    <Compile Include="Assets\Scripts\RobotController.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="UnityEngine">
